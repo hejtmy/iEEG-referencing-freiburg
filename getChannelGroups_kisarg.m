@@ -1,56 +1,57 @@
-function chGroups = getChannelGroups_kisarg(H, groupSpecification)
+function channelGroups = getChannelGroups_kisarg(Header, groupSpecification)
 % returns channel groups (cell array) based on group specification
 
 % (c) Jiri, Apr16
+% renamed functions and variables and cleaned flow so that it can be read by other people - Lukáš Hejtmánek, June, 2016
 
-chGroups = [];
+channelGroups = [];
 
 %% selected channels (for example signal type = iEEG)
-assert(isfield(H,'selCh_H'));
-selCh_H = H.selCh_H;
-selCh_raw = 1:size(selCh_H,2);      % corresponds to indices in rawData
+assert(isfield(Header,'selectedChannelsNumbers'));
+selectedChannelsNumbers = Header.selectedChannelsNumbers;
+selectedChannelsIndexes = 1:size(selectedChannelsNumbers,2);      % corresponds to indices in rawData
 
 %% CAR: channel groups = headboxes of amplifier with different REFs & GNDs
 if strcmp(groupSpecification, 'perHeadbox')
-    if isfield(H.channels(1), 'headboxNumber')      % re-referencing per headbox
-        hdbxAll = [];
-        for ch = 1:size(H.channels,2)
-            hdbxAll = cat(2, hdbxAll, H.channels(ch).headboxNumber);        % headbox numbers from all channels
+    if isfield(Header.channels(1), 'headboxNumber')      % re-referencing per headbox
+        headboxAll = [];
+        for ch = 1:size(Header.channels,2)
+            headboxAll = cat(2, headboxAll, Header.channels(ch).headboxNumber);        % headbox numbers from all channels
         end
-        hdbxSel = hdbxAll(selCh_H);                                         % headbox numbers from selected channels (e.g. iEEG channels)
-        assert(size(selCh_raw,2) == size(hdbxSel,2));
+        headboxSelected = headboxAll(selectedChannelsNumbers);                      % headbox numbers from selected channels (e.g. iEEG channels)
+        assert(size(selectedChannelsIndexes,2) == size(headboxSelected,2));         % check that each part has a headbox number
 
-        hdbxUnq = unique(hdbxSel);                                          % headbox numers
-        chGroups = cell(1,size(hdbxUnq,2));
-        for grp = 1:size(hdbxUnq,2)
-            thisGrp = hdbxUnq(grp);
-            for ch = 1:size(selCh_raw,2)
-                if hdbxSel(ch) == thisGrp
-                    chGroups{grp} = cat(2, chGroups{grp}, ch);
+        headboxUnique = unique(headboxSelected);                                          % headbox numers
+        channelGroups = cell(1,size(headboxUnique,2));
+        for headbox = 1:size(headboxUnique,2)
+            thisHeadbox = headboxUnique(headbox);
+            for channel = 1:size(selectedChannelsIndexes,2)
+                if headboxSelected(channel) == thisHeadbox
+                    channelGroups{headbox} = cat(2, channelGroups{headbox}, channel);
                 end
             end
         end
     else                                            % only 1 headbox in recording
-        chGroups{1,1} = selCh_raw;
+        channelGroups{1,1} = selectedChannelsIndexes;
     end
     
 end
 
 %% CAR: channel groups = SEEG electrode shanks
 if strcmp(groupSpecification, 'perElectrode')
-    elsh_all = [];
-    for ch = 1:size(H.channels,2)
-        elsh_all{ch} = extractFromString(H.channels(ch).name, 'string');    % string part of all channel names
+    electrodesAll = [];
+    for channel = 1:size(Header.channels,2)
+        electrodesAll{channel} = extractFromString(Header.channels(channel).name, 'string');    % string part of all channel names
     end    
-    elsh_sel = elsh_all(selCh_H);                                           % string part of selected channels
-    elsh_unq = unique(elsh_sel);                                            % electrode shank names
+    electrodesSelected = electrodesAll(selectedChannelsNumbers);        % string part of selected channels
+    electrodesUnique = unique(electrodesSelected);                              % electrode shank names
     
-    chGroups = cell(1,size(elsh_unq,2));
-    for grp = 1:size(elsh_unq,2)
-        thisGrp = elsh_unq{grp};
-        for ch = 1:size(selCh_raw,2)
-            if strcmp(extractFromString(H.channels(ch).name, 'string'), thisGrp)
-                chGroups{grp} = cat(2, chGroups{grp}, ch);
+    channelGroups = cell(1,size(electrodesUnique,2));
+    for electrode = 1:size(electrodesUnique,2)
+        electrodeName = electrodesUnique{electrode};
+        for channel = 1:size(selectedChannelsIndexes,2)
+            if strcmp(extractFromString(Header.channels(channel).name, 'string'), electrodeName)
+                channelGroups{electrode} = cat(2, channelGroups{electrode}, channel);
             end
         end
     end    
@@ -59,14 +60,14 @@ end
 
 %% BIP: channel groups = neighboring SEEG channels on same electrode shank
 if strcmp(groupSpecification, 'bip')   
-    chGroups = [];
-    grp = 1;
-    for ch = 2:size(H.channels,2)
-        prevCh_shank = extractFromString(H.channels(ch-1).name, 'string');
-        currCh_shank = extractFromString(H.channels(ch).name, 'string');        
-        if strcmp(prevCh_shank, currCh_shank) && strcmp(H.channels(ch-1).signalType, 'SEEG') && strcmp(H.channels(ch).signalType, 'SEEG')
-            chGroups{grp} = [ch-1, ch];
-            grp = grp+1;
+    channelGroups = [];
+    position = 1;
+    for channel = 2:size(Header.channels,2)
+        prevCh_shank = extractFromString(Header.channels(channel-1).name, 'string');
+        currCh_shank = extractFromString(Header.channels(channel).name, 'string');        
+        if strcmp(prevCh_shank, currCh_shank) && strcmp(Header.channels(channel-1).signalType, 'SEEG') && strcmp(Header.channels(channel).signalType, 'SEEG')
+            channelGroups{position} = [channel-1, channel];
+            position = position+1;
         end
     end   
 end

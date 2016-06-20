@@ -22,15 +22,8 @@ load(fileName, 'Header');
 assert(size(d,2) == size(Header.channels,2));
 
 %% selected channels: signal type = iEEG
-selectedChannelNumbers = [];
-selectedSignals = {'SEEG', 'ECoG-Grid', 'ECoG-Strip'};           % select desired channel group
-for channel = 1:size(Header.channels,2)
-    if isfield(Header.channels(channel), 'signalType')
-        if ismember(Header.channels(channel).signalType, selectedSignals)
-            selectedChannelsNumbers = [selectedChannelsNumbers, Header.channels(channel).numberOnAmplifier];
-        end
-    end
-end
+selectedChannelNumbers = selectchannels(Header, {'SEEG', 'ECoG-Grid', 'ECoG-Strip'});
+
 rawData = d(:,selectedChannelsNumbers);
 Header.selectedChannelsNumbers = selectedChannelsNumbers;
 

@@ -23,6 +23,7 @@ function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, varar
 
 %VALIDATING HEADER AND nInputChannels
 
+%% INPUT PARSING
 p = inputParser;
 %validating functions
 checkEvent = @(x) isfield(obj.experiment_data.events, x) && ischar(x);
@@ -31,7 +32,6 @@ checkValidFilter = @(x) any(validatestring(x, validFilter));
 validGrouping = {'perHeadbox', 'perElectrode', 'bipolar'};
 checkValidGrouping = @(x) any(validatestring(x, validGrouping));
 
-addRequired(p,'event_name',checkEvent);
 version = matlabversion;
 if(version.year > 2015)
     addParameter(p,'filterName', 'noFilter', checkValidFilter);
@@ -41,7 +41,8 @@ else
     addParameter(p, 'channelGrouping','', checkValidGrouping);
 end
 parse(p, varargin{:});
-            
+
+%% The real flow
 switch p.Results.filterName
     case 'bipolar'
         filterMatrix = bipolarreference(Header, nInputChannels);
@@ -51,23 +52,3 @@ switch p.Results.filterName
         filterMatrix =  eye(nInputChannels);
 end
 
-%% BIP: bipolar reference
-if strcmp(filterSettings.name, 'bip')
-    
-    % define channel groups
-    channelGroups = getChannelGroups_kisarg(Header, 'bip');
-    
-    % design filter
-    filterMatrix = zeros(nInputChannels, size(channelGroups,2));      % init
-    selCh_H = [];
-    for channelGroup = 1:size(channelGroups,2)
-        selectedChannels = channelGroups{channelGroup};
-        filterMatrix(selectedChannels(1),channelGroup) = 1;                     % set weights for BIP channels
-        if size(selectedChannels,2) == 2
-            filterMatrix(selectedChannels(2),channelGroup) = -1;                % set weights for BIP channels
-        else
-            warning(['BIP: only 1 channel on electrode shank, no referencing. Channel = ' num2str(channelGroup)]);
-        end
-        selCh_H = cat(2, selCh_H, selectedChannels(1));
-    end  
-end

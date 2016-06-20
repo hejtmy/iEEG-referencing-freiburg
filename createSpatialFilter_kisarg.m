@@ -1,6 +1,6 @@
 %bad design in the filter settings accepting struct as an input variable - as this function depends on the struct naming
 %conventions elsewhere - need to redo it to optional parameters
-function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, selectedChannels, varargin)
+function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, selectedChannelsNumbers, varargin)
 % creates a spatial filter for (intracranial) EEG data
 % input vars:
 %   Header: header structure
@@ -36,7 +36,7 @@ checkValidGrouping = @(x) any(validatestring(x, validGrouping));
 checkChannels = @(x) isnumeric(x);
 
 version = matlabversion;
-addRequired(p,'selectedChannels',checkChannels);
+addRequired(p,'selectedChannelsNumbers',checkChannels);
 if(version.year > 2015)
     addParameter(p,'filterName', 'noFilter', checkValidFilter);
     addParameter(p, 'channelGrouping','', checkValidGrouping);
@@ -44,14 +44,14 @@ else
     addParamValue(p,'filterName', 'noFilter', checkValidFilter);
     addParamValue(p, 'channelGrouping','', checkValidGrouping);
 end
-parse(p, selectedChannels, varargin{:});
+parse(p, selectedChannelsNumbers, varargin{:});
 
 %% The real flow
 switch p.Results.filterName
     case 'bipolar'
-        filterMatrix = bipolarreference(Header, nInputChannels, selectedChannels);
+        filterMatrix = bipolarreference(Header, nInputChannels, selectedChannelsNumbers);
     case 'commonAverage'
-        filterMatrix = commonaveragereference(Header, nInputChannels, selectedChannels, p.Results.channelGrouping);
+        filterMatrix = commonaveragereference(Header, nInputChannels, selectedChannelsNumbers, p.Results.channelGrouping);
     case 'noFilter'
         filterMatrix =  eye(nInputChannels);
 end

@@ -1,6 +1,6 @@
 %bad design in the filter settings accepting struct as an input variable - as this function depends on the struct naming
 %conventions elsewhere - need to redo it to optional parameters
-function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, filterSettings)
+function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, varargin)
 % creates a spatial filter for (intracranial) EEG data
 % input vars:
 %   Header: header structure
@@ -21,28 +21,38 @@ function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, filte
 % (c) Jiri, May16
 % renamed functions and variables and cleaned flow so that it can be read by other people - Lukáš Hejtmánek, June, 2016
 
-%  init
-filterFound = false;
-           
-%% CAR: common average reference
-if strfind(filterSettings.name, 'car')        % ~ common average re-reference (CAR)
-    filterFound = true;
-    
-    % define channel groups
-    channelGroups = getChannelGroups_kisarg(Header, filterSettings.channelGroups);
-    
-    % design filter
-    filterMatrix = zeros(nInputChannels);                        % init
-    for channelGroup = 1:size(channelGroups,2)
-        selectedChannels = channelGroups{channelGroup};
-        nChannels = size(selectedChannels,2);
-        filterMatrix(selectedChannels,selectedChannels) = eye(nChannels) - 1/nChannels.*ones(nChannels);    % set weights for CAR channels
-    end    
+%VALIDATING HEADER AND nInputChannels
+
+p = inputParser;
+%validating functions
+checkEvent = @(x) isfield(obj.experiment_data.events, x) && ischar(x);
+validFilter = {'bipolar', 'commonAverage', 'noFilter'};
+checkValidFilter = @(x) any(validatestring(x, validFilter));
+validGrouping = {'perHeadbox', 'perElectrode', 'bipolar'};
+checkValidGrouping = @(x) any(validatestring(x, validGrouping));
+
+addRequired(p,'event_name',checkEvent);
+version = matlabversion;
+if(version.year > 2015)
+    addParameter(p,'filterName', 'noFilter', checkValidFilter);
+    addParameter(p, 'channelGrouping','', checkValidGrouping);
+else
+    addParamValue(p,'filterName',[-500 1000], checkTimeRange);
+    addParameter(p, 'channelGrouping','', checkValidGrouping);
+end
+parse(p, varargin{:});
+            
+switch p.Results.filterName
+    case 'bipolar'
+        filterMatrix = bipolarreference(Header, nInputChannels);
+    case 'commonAverage'
+        filterMatrix = commonaveragereference(Header, nInputChannels, p.Resulkts.channelGrouping);
+    case 'noFilter'
+        filterMatrix =  eye(nInputChannels);
 end
 
 %% BIP: bipolar reference
 if strcmp(filterSettings.name, 'bip')
-    filterFound = true;
     
     % define channel groups
     channelGroups = getChannelGroups_kisarg(Header, 'bip');
@@ -61,11 +71,3 @@ if strcmp(filterSettings.name, 'bip')
         selCh_H = cat(2, selCh_H, selectedChannels(1));
     end  
 end
-
-%% NAN: no spatial filter
-if strcmp(filterSettings.name, 'nan')
-    filterFound = true;
-    filterMatrix = eye(nInputChannels);
-end
-
-assert(filterFound);

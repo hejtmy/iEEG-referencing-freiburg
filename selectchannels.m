@@ -1,8 +1,7 @@
-function [ selectedChannelNumbers ] = selectchannels( Header, signalTypes )
+function [ selectedChannelsNumbers ] = selectchannels( Header, signalTypes )
 %SELECTCHANNELS Summary of this function goes here
 %   signalTypes: cell with strings of signal types, e.g. {'SEEG', 'ECoG-Grid', 'ECoG-Strip'};  
-    selectedChannelNumbers = [];
-    signalTypes = {'SEEG', 'ECoG-Grid', 'ECoG-Strip'};           % select desired channel group
+    selectedChannelsNumbers = [];
     for channelIndex = 1:size(Header.channels, 2)
         if isfield(Header.channels(channelIndex), 'signalType')  % if the field exists - if it doesn't, this should really return something
             if ismember(Header.channels(channelIndex).signalType, signalTypes)
@@ -13,4 +12,3 @@ function [ selectedChannelNumbers ] = selectchannels( Header, signalTypes )
         end
     end
 end
-

@@ -1,6 +1,7 @@
 function [ channelGroups ] = perheadbox( Header, selectedChannelsIndices )
 %PERHEADBOX Summary of this function goes here
 %   Detailed explanation goes here
+% Common average reference: headboxes of amplifier with different REFs & GNDs
     if ~isfield(Header.channels(1), 'headboxNumber')
         channelGroups{1,1} = selectedChannelsIndices;
         return

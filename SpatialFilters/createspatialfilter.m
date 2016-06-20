@@ -1,9 +1,9 @@
-function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, selectedChannelsIndices, varargin)
+function filterMatrix = createspatialfilter(Header, nInputChannels, selectedChannelsIndices, varargin)
 % creates a spatial filter for (intracranial) EEG data
 % input vars:
 %   Header: header structure
 %   nInputChannels: number of input channels
-%   selectedChannelsNumbers: numbers (not indices) of selected channels
+%   selectedChannelsIndices: not indices of selected channels
 %   varargin:
 %           'filterName': 'bipolar', 'commonaverage', 'noFilter'
 %           'channelGrouping': 'perElectrode', 'perHeadbox'

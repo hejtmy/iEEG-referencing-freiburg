@@ -1,4 +1,4 @@
-function channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices, groupSpecification)
+function channelGroups = getchannelgroups(Header, selectedChannelsIndices, groupSpecification)
 % returns channel groups (cell array) based on group specification
 
 % (c) Jiri, Apr16
@@ -13,27 +13,11 @@ function channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices
 
 % select channels from the header based on the channel number
 % convert from number to index
-selectedChannelsIndices = 1:size(selectedChannelsNumbers, 2);      % corresponds to indices in rawData - raw data was already shrunk, doesnt correspond to indices in whole raw data
+%selectedChannelsIndices = 1:size(selectedChannelsNumbers, 2);      % corresponds to indices in rawData - raw data was already shrunk, doesnt correspond to indices in whole raw data
 
-%% Common average reference: headboxes of amplifier with different REFs & GNDs
-if strcmp(groupSpecification, 'perHeadbox')
-        headboxAllNumbers = [];
-        for channelIndex = 1:size(Header.channels,2)
-            headboxAllNumbers = cat(2, headboxAllNumbers, Header.channels(channelIndex).headboxNumber);        % headbox numbers from all channels
-        end
-        headboxSelectedNumbers = headboxAllNumbers(selectedChannelsNumbers);                      % headbox numbers from selected channels (e.g. iEEG channels)
-        assert(size(selectedChannelsIndices,2) == size(headboxSelectedNumbers,2));         % check that each part has a headbox number
-
-        headboxUniqueNumbers = unique(headboxSelectedNumbers);                                          % headbox numers
-        channelGroups = cell(1,size(headboxUniqueNumbers,2));
-        for headboxIndex = 1:size(headboxUniqueNumbers,2)
-            thisHeadboxNumber = headboxUniqueNumbers(headboxIndex);
-            for channelIndex = 1:size(selectedChannelsIndices,2)    %TODO!!! Shouldn't this ba selectedNumber?
-                if headboxSelectedNumbers(channelIndex) == thisHeadboxNumber
-                    channelGroups{headbox} = cat(2, channelGroups{headbox}, channelIndex);
-                end
-            end
-        end
+switch groupSpecification
+    case 'perHeadbox'
+        perheadbox(Header, selectedChannelsIndices);
 end
 
 %% Common average reference: SEEG electrode shanks

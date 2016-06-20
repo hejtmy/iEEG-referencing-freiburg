@@ -15,7 +15,7 @@ function [ channelGroups ] = perheadbox( Header, selectedChannelsIndices )
     channelGroups = cell(1, size(headboxUniqueNumbers,2));
     for headboxNumber = headboxUniqueNumbers
         %select all indices of all headbox numbers
-        indices = (headboxSelectedNumbers == headboxNumber);            %TODO!!! This should be channel number, not index
+        indices = (headboxSelectedNumbers == headboxNumber);
         channelGroups{headboxNumber} = selectedChannelsIndices(indices)';
     end
 end

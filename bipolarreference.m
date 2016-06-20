@@ -1,8 +1,8 @@
-function [ filtermatrix ] = bipolarreference( Header, nInputChannels, selectedChannelsNumbers )
+function [ filterMatrix ] = bipolarreference( Header, nInputChannels, selectedChannelsIndices )
 %BIPOLARREFERENCE Summary of this function goes here
 %   Detailed explanation goes here
     % define channel groups
-    channelGroups = getChannelGroups_kisarg(Header, selectedChannelsNumbers, 'bipolar');
+    channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices, 'bipolar');
     
     % design filter
     filterMatrix = zeros(nInputChannels, size(channelGroups,2));      % init
@@ -17,6 +17,4 @@ function [ filtermatrix ] = bipolarreference( Header, nInputChannels, selectedCh
         end
         selCh_H = cat(2, selCh_H, selectedChannels(1));
     end  
-
 end
-

@@ -1,19 +1,22 @@
-function channelGroups = getChannelGroups_kisarg(Header, groupSpecification)
+function channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices, groupSpecification)
 % returns channel groups (cell array) based on group specification
 
 % (c) Jiri, Apr16
 % renamed functions and variables and cleaned flow so that it can be read by other people - Lukáš Hejtmánek, June, 2016
 
-channelGroups = [];
+%% VALIDATION
 
-%% selected channels (for example signal type = iEEG)
-assert(isfield(Header,'selectedChannelsNumbers'));
-selectedChannelsNumbers = Header.selectedChannelsNumbers;
-selectedChannelsIndices = 1:size(selectedChannelsNumbers,2);      % corresponds to indices in rawData
+%validate Header - others should already be validated above
 
-%% CAR: channel groups = headboxes of amplifier with different REFs & GNDs
+%%
+% selected channels (for example signal type = iEEG)
+
+% select channels from the header based on the channel number
+% convert from number to index
+selectedChannelsIndices = 1:size(selectedChannelsNumbers, 2);      % corresponds to indices in rawData - raw data was already shrunk, doesnt correspond to indices in whole raw data
+
+%% Common average reference: headboxes of amplifier with different REFs & GNDs
 if strcmp(groupSpecification, 'perHeadbox')
-    if isfield(Header.channels(1), 'headboxNumber')      % re-referencing per headbox
         headboxAllNumbers = [];
         for channelIndex = 1:size(Header.channels,2)
             headboxAllNumbers = cat(2, headboxAllNumbers, Header.channels(channelIndex).headboxNumber);        % headbox numbers from all channels
@@ -31,13 +34,9 @@ if strcmp(groupSpecification, 'perHeadbox')
                 end
             end
         end
-    else                                            % only 1 headbox in recording
-        channelGroups{1,1} = selectedChannelsIndices;
-    end
-    
 end
 
-%% CAR: channel groups = SEEG electrode shanks
+%% Common average reference: SEEG electrode shanks
 if strcmp(groupSpecification, 'perElectrode')
     electrodesAllNames = [];
     for channel = 1:size(Header.channels,2)

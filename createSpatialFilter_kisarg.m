@@ -1,18 +1,16 @@
-%bad design in the filter settings accepting struct as an input variable - as this function depends on the struct naming
-%conventions elsewhere - need to redo it to optional parameters
-function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, selectedChannelsNumbers, varargin)
+function filterMatrix = createSpatialFilter_kisarg(Header, nInputChannels, selectedChannelsIndices, varargin)
 % creates a spatial filter for (intracranial) EEG data
 % input vars:
 %   Header: header structure
 %   nInputChannels: number of input channels
-%   filterSettings = struct with fields: 
-%        name: 'car'
-%       channelGroups: 'perElectrode' OR 'perHeadbox'
+%   selectedChannelsNumbers: numbers (not indices) of selected channels
+%   varargin:
+%           'filterName': 'bipolar', 'commonaverage', 'noFilter'
+%           'channelGrouping': 'perElectrode', 'perHeadbox'
 % output var:
 %   filterMatrix: nInputChannels x nInputChannels
 % example: 
 %   S_car = createSpatialFilter(Header, 110, filterSettings);
-% usage:
 %   X_car = X_ref * S_car;   where:
 %       X_ref = [samples x nInputChannels] data matrix
 %       X_car = [samples x nInputChannels] data matrix
@@ -30,13 +28,13 @@ p = inputParser;
 validFilter = {'bipolar', 'commonAverage', 'noFilter'};
 checkValidFilter = @(x) any(validatestring(x, validFilter));
 
-validGrouping = {'perHeadbox', 'perElectrode', 'bipolar'};
+validGrouping = {'perHeadbox', 'perElectrode'};
 checkValidGrouping = @(x) any(validatestring(x, validGrouping));
 
 checkChannels = @(x) isnumeric(x);
 
 version = matlabversion;
-addRequired(p,'selectedChannelsNumbers',checkChannels);
+addRequired(p,'selectedChannelsIndices',checkChannels);
 if(version.year > 2015)
     addParameter(p,'filterName', 'noFilter', checkValidFilter);
     addParameter(p, 'channelGrouping','', checkValidGrouping);
@@ -49,10 +47,9 @@ parse(p, selectedChannelsNumbers, varargin{:});
 %% The real flow
 switch p.Results.filterName
     case 'bipolar'
-        filterMatrix = bipolarreference(Header, nInputChannels, selectedChannelsNumbers);
+        filterMatrix = bipolarreference(Header, nInputChannels, selectedChannelsIndices);
     case 'commonAverage'
-        filterMatrix = commonaveragereference(Header, nInputChannels, selectedChannelsNumbers, p.Results.channelGrouping);
+        filterMatrix = commonaveragereference(Header, nInputChannels, selectedChannelsIndices, p.Results.channelGrouping);
     case 'noFilter'
         filterMatrix =  eye(nInputChannels);
 end
-

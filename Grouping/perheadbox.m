@@ -3,12 +3,12 @@ function [ channelGroups ] = perheadbox( Header, selectedChannelsIndices )
 %   Detailed explanation goes here
     if ~isfield(Header.channels(1), 'headboxNumber')
         channelGroups{1,1} = selectedChannelsIndices;
-        return 
+        return
     end
     %creates a vector of header indeces
     headboxAllNumbers = extractfields(Header.channels, 'headboxNumber')';
 
-    headboxSelectedNumbers = headboxAllNumbers(selectedChannelsNumbers);        % headbox numbers - FIX THIS!!!
+    headboxSelectedNumbers = headboxAllNumbers(selectedChannelsIndices);        % headbox numbers - FIX THIS!!!
     assert(size(selectedChannelsIndices,2) == size(headboxSelectedNumbers,2));          % check that each part has a headbox number
 
     headboxUniqueNumbers = unique(headboxSelectedNumbers);                              % headbox numers

@@ -6,8 +6,13 @@ function [ valueArray ] = extractfield( structArray, name )
     else 
         dim = 1;
     end
-    valueArray = zeros(length(structArray),1);
+    checkExistance = @(x) isfield (x, name) &&  ~isempty(x.(name)); %checking existance of field and value inside
+    valueArray = zeros(1, length(structArray));
     for i = 1:size(structArray,dim);
+        if ~checkExistance(structArray(i))
+            valueArray(i) = NaN;      
+            continue
+        end
         valueArray(i) = structArray(i).(name);
     end
 end

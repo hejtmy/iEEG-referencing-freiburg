@@ -10,8 +10,11 @@ fileName = 'path to file';
 assert(exist(fileName,'file') == 2);
 load(fileName);
 Header = H;
-clear H;
-assert(size(d,2) == size(Header.channels,2));
+
+if ~checkheader(Header, d)
+    warning('Freiburg:Header:failedCheck', 'Header file did not pass the check');
+    return
+end
 
 %% selected channels: signal type = iEEG
 selectedChannelsIndices = selectchannelsindices(Header, {'SEEG', 'ECoG-Grid', 'ECoG-Strip'});

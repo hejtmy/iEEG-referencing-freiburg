@@ -2,11 +2,9 @@ function [ filterMatrix ] = bipolarreference( Header, nInputChannels, selectedCh
 %BIPOLARREFERENCE Summary of this function goes here
 %   Detailed explanation goes here
     % define channel groups
-    channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices, 'bipolar');
-    
+    channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices, 'bipolar');    
     % design filter
     filterMatrix = zeros(nInputChannels, size(channelGroups,2));      % init
-    selCh_H = [];
     for channelGroup = 1:size(channelGroups,2)
         selectedChannels = channelGroups{channelGroup};
         filterMatrix(selectedChannels(1), channelGroup) = 1;                     % set weights for BIP channels
@@ -15,6 +13,5 @@ function [ filterMatrix ] = bipolarreference( Header, nInputChannels, selectedCh
         else
             warning(['BIP: only 1 channel on electrode shank, no referencing. Channel = ' num2str(channelGroup)]);
         end
-        selCh_H = cat(2, selCh_H, selectedChannels(1));
     end  
 end

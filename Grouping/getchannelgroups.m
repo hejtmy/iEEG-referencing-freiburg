@@ -20,25 +20,7 @@ switch groupSpecification
         channelGroups = perheadboxgrouping(Header, selectedChannelsIndices);
     case 'bipolar'
         channelGroups = bipolargrouping(Header, selectedChannelsIndices);
+    case 'perElectrode'
+        channelGroups = perelectrodegrouping(Header, selectedChannelsIndices);
 end
 return
-
-%% Common average reference: SEEG electrode shanks
-if strcmp(groupSpecification, 'perElectrode')
-    electrodesAllNames = [];
-    for channel = 1:size(Header.channels,2)
-        electrodesAllNames{channel} = extractFromString(Header.channels(channel).name, 'string');    % string part of all channel names
-    end    
-    electrodesSelectedNames = electrodesAllNames(selectedChannelsNumbers);        % string part of selected channels
-    electrodesUniqueNames = unique(electrodesSelectedNames);                              % electrode shank names
-    
-    channelGroups = cell(1,size(electrodesUniqueNames,2));
-    for electrodeIndex = 1:size(electrodesUniqueNames,2)
-        electrodeName = electrodesUniqueNames{electrodeIndex};
-        for channelIndex = 1:size(selectedChannelsIndices,2)
-            if strcmp(extractFromString(Header.channels(channelIndex).name, 'string'), electrodeName)
-                channelGroups{electrodeIndex} = cat(2, channelGroups{electrodeIndex}, channelIndex);
-            end
-        end
-    end    
-end

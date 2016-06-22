@@ -2,7 +2,7 @@ function [ filterMatrix ] = bipolarreference( Header, nInputChannels, selectedCh
 %BIPOLARREFERENCE Summary of this function goes here
 %   Detailed explanation goes here
     % define channel groups
-    channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices, 'bipolar');    
+    channelGroups = getchannelgroups(Header, selectedChannelsIndices, 'bipolar');    
     % design filter
     filterMatrix = zeros(nInputChannels, size(channelGroups,2));      % init
     for channelGroup = 1:size(channelGroups,2)

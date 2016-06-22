@@ -18,14 +18,14 @@ selectedChannelsIndices = selectchannelsindices(Header, {'SEEG', 'ECoG-Grid', 'E
 rawData = d(:,selectedChannelsIndices); % bad idea
 
 %% EXAMPLE: design spatial filter: CAR (per headbox)
-filterMatrix = createSpatialFilter_kisarg(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perHeadbox');
+filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perHeadbox');
 assert(size(rawData,2) == size(filterMatrix,1));
 % apply spatial filter
 filteredData = rawData * filterMatrix;  
 assert(size(filteredData,1) == size(rawData,1));
 
 %% EXAMPLE: design spatial filter: CAR (per electrode shank)
-filterMatrix = createSpatialFilter_kisarg(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perElectrode');
+filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perElectrode');
 assert(size(rawData,2) == size(filterMatrix,1));
 
 % apply spatial filter
@@ -33,7 +33,7 @@ filteredData = rawData * filterMatrix;
 assert(size(filteredData,1) == size(rawData,1));
 
 %% EXAMPLE: design spatial filter: BIP (bipolar on electrode shanks)
-filterMatrix = createSpatialFilter_kisarg(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'bipolar');
+filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'bipolar');
 assert(size(rawData,2) == size(filterMatrix,1));
 % apply spatial filter
 filteredData = rawData * filterMatrix;  

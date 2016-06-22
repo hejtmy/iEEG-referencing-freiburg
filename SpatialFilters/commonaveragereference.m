@@ -2,7 +2,7 @@ function [ filterMatrix ] = commonaveragereference( Header, nInputChannels, sele
 %COMMONAVERAGEREFERENCE Summary of this function goes here
 %   Detailed explanation goes here
  %  define channel groups
-    channelGroups = getChannelGroups_kisarg(Header, selectedChannelsIndices, channelGrouping);
+    channelGroups = getchannelgroups(Header, selectedChannelsIndices, channelGrouping);
     
     filterMatrix = zeros(nInputChannels);
     for channelGroup = 1:size(channelGroups, 2)

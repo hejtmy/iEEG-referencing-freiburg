@@ -42,7 +42,7 @@ else
     addParamValue(p,'filterName', 'noFilter', checkValidFilter);
     addParamValue(p, 'channelGrouping','', checkValidGrouping);
 end
-parse(p, selectedChannelsNumbers, varargin{:});
+parse(p, selectedChannelsIndices, varargin{:});
 
 %% The real flow
 switch p.Results.filterName

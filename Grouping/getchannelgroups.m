@@ -17,8 +17,11 @@ function channelGroups = getchannelgroups(Header, selectedChannelsIndices, group
 
 switch groupSpecification
     case 'perHeadbox'
-        perheadbox(Header, selectedChannelsIndices);
+        channelGroups = perheadbox(Header, selectedChannelsIndices);
+    case 'bipolar'
+        channelGroups = bipolargrouping(Header, selectedChannelsIndices);
 end
+return
 
 %% Common average reference: SEEG electrode shanks
 if strcmp(groupSpecification, 'perElectrode')
@@ -38,19 +41,4 @@ if strcmp(groupSpecification, 'perElectrode')
             end
         end
     end    
-end
-
-
-%% BIP: channel groups = neighboring SEEG channels on same electrode shank
-if strcmp(groupSpecification, 'bip')   
-    channelGroups = [];
-    position = 1;
-    for channel = 2:size(Header.channels,2) % TODO! Differently!!! FOR FUCK SAKE
-        prevCh_shank = extractFromString(Header.channels(channel-1).name, 'string');
-        currCh_shank = extractFromString(Header.channels(channel).name, 'string');        
-        if strcmp(prevCh_shank, currCh_shank) && strcmp(Header.channels(channel-1).signalType, 'SEEG') && strcmp(Header.channels(channel).signalType, 'SEEG')
-            channelGroups{position} = [channel-1, channel];
-            position = position+1;
-        end
-    end   
 end

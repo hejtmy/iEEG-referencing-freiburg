@@ -7,7 +7,7 @@ function [ selectedChannelsIndices ] = selectchannelsindices(  Header, signalTyp
     for channelIndex = 1:size(Header.channels, 2)
         if isfield(Header.channels(channelIndex), 'signalType')  % if the field exists - if it doesn't, this should really return something
             if ismember(Header.channels(channelIndex).signalType, signalTypes)
-                selectedChannelsIndices = [selectedChannelsIndices, i];
+                selectedChannelsIndices = [selectedChannelsIndices, channelIndex];
             end
         else
             fprintf('Channel %d struct does not have singalType field in header', channelIndex);

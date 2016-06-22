@@ -1,4 +1,4 @@
-function [ channelGroups ] = perheadbox( Header, selectedChannelsIndices )
+function [ channelGroups ] = perheadboxgrouping( Header, selectedChannelsIndices )
 %PERHEADBOX Summary of this function goes here
 %   Detailed explanation goes here
 % Common average reference: headboxes of amplifier with different REFs & GNDs

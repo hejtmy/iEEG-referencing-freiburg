@@ -17,7 +17,7 @@ function channelGroups = getchannelgroups(Header, selectedChannelsIndices, group
 
 switch groupSpecification
     case 'perHeadbox'
-        channelGroups = perheadbox(Header, selectedChannelsIndices);
+        channelGroups = perheadboxgrouping(Header, selectedChannelsIndices);
     case 'bipolar'
         channelGroups = bipolargrouping(Header, selectedChannelsIndices);
 end

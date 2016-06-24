@@ -53,3 +53,5 @@ switch p.Results.filterName
     case 'noFilter'
         filterMatrix =  eye(nInputChannels);
 end
+
+filterMatrix = filterMatrix(selectedChannelsIndices,selectedChannelsIndices);

@@ -7,16 +7,16 @@ function [ channelGroups ] = perheadboxgrouping( Header, selectedChannelsIndices
         return
     end
     %creates a vector of header indeces
-    headboxAllNumbers = extractfields(Header.channels, 'headboxNumber')';
-
-    headboxSelectedNumbers = headboxAllNumbers(selectedChannelsIndices);        % headbox numbers - FIX THIS!!!
+    headboxAllNumbers = extractfield(Header.channels, 'headboxNumber')';
+    headboxAllNumbers = cell2mat(headboxAllNumbers);                                            %needs to convert to doubles
+    %validate that all numbers are indeed numbers - TODO
+    headboxSelectedNumbers = headboxAllNumbers(selectedChannelsIndices)';           % headbox numbers - FIX THIS!!!
     assert(size(selectedChannelsIndices,2) == size(headboxSelectedNumbers,2));          % check that each part has a headbox number
-
     headboxUniqueNumbers = unique(headboxSelectedNumbers);                              % headbox numers
     channelGroups = cell(1, size(headboxUniqueNumbers,2));
     for headboxNumber = headboxUniqueNumbers
         %select all indices of all headbox numbers
         indices = (headboxSelectedNumbers == headboxNumber);
-        channelGroups{headboxNumber} = selectedChannelsIndices(indices)';
+        channelGroups{headboxNumber} = selectedChannelsIndices(indices);
     end
 end

@@ -18,17 +18,18 @@ end
 
 %% selected channels: signal type = iEEG
 selectedChannelsIndices = selectchannelsindices(Header, {'SEEG', 'ECoG-Grid', 'ECoG-Strip'});
-rawData = d(:,selectedChannelsIndices); % bad idea
+rawData = d(:, selectedChannelsIndices); % bad idea
+nChannels = size(Header.channels, 2);    %original number of channels
 
 %% EXAMPLE: design spatial filter: CAR (per headbox)
-filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perHeadbox');
+filterMatrix = createspatialfilter(Header, nChannels, selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perHeadbox');
 assert(size(rawData,2) == size(filterMatrix,1));
 % apply spatial filter
 filteredData = rawData * filterMatrix;  
 assert(size(filteredData,1) == size(rawData,1));
 
 %% EXAMPLE: design spatial filter: CAR (per electrode shank)
-filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perElectrode');
+filterMatrix = createspatialfilter(Header, nChannels, selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perElectrode');
 assert(size(rawData,2) == size(filterMatrix,1));
 
 % apply spatial filter
@@ -36,7 +37,7 @@ filteredData = rawData * filterMatrix;
 assert(size(filteredData,1) == size(rawData,1));
 
 %% EXAMPLE: design spatial filter: BIP (bipolar on electrode shanks)
-filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'bipolar');
+filterMatrix = createspatialfilter(Header, nChannels, selectedChannelsIndices, 'filterName', 'bipolar');
 assert(size(rawData,2) == size(filterMatrix,1));
 % apply spatial filter
 filteredData = rawData * filterMatrix;  

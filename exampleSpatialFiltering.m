@@ -10,22 +10,25 @@ fileName = 'path to file';
 assert(exist(fileName,'file') == 2);
 load(fileName);
 Header = H;
-clear H;
-assert(size(d,2) == size(Header.channels,2));
+
+if ~checkheader(Header, d)
+    warning('Freiburg:Header:failedCheck', 'Header file did not pass the check');
+    return
+end
 
 %% selected channels: signal type = iEEG
 selectedChannelsIndices = selectchannelsindices(Header, {'SEEG', 'ECoG-Grid', 'ECoG-Strip'});
 rawData = d(:,selectedChannelsIndices); % bad idea
 
 %% EXAMPLE: design spatial filter: CAR (per headbox)
-filterMatrix = createSpatialFilter_kisarg(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perHeadbox');
+filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perHeadbox');
 assert(size(rawData,2) == size(filterMatrix,1));
 % apply spatial filter
 filteredData = rawData * filterMatrix;  
 assert(size(filteredData,1) == size(rawData,1));
 
 %% EXAMPLE: design spatial filter: CAR (per electrode shank)
-filterMatrix = createSpatialFilter_kisarg(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perElectrode');
+filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'commonAverage', 'channelGrouping', 'perElectrode');
 assert(size(rawData,2) == size(filterMatrix,1));
 
 % apply spatial filter
@@ -33,7 +36,7 @@ filteredData = rawData * filterMatrix;
 assert(size(filteredData,1) == size(rawData,1));
 
 %% EXAMPLE: design spatial filter: BIP (bipolar on electrode shanks)
-filterMatrix = createSpatialFilter_kisarg(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'bipolar');
+filterMatrix = createspatialfilter(Header, size(selectedChannelsIndices,2), selectedChannelsIndices, 'filterName', 'bipolar');
 assert(size(rawData,2) == size(filterMatrix,1));
 % apply spatial filter
 filteredData = rawData * filterMatrix;  

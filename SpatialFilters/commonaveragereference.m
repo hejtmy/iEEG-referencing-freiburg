@@ -9,5 +9,5 @@ function [ filterMatrix ] = commonaveragereference( Header, nInputChannels, sele
         selectedChannels = channelGroups{channelGroup};
         nChannels = size(selectedChannels, 2);
         filterMatrix(selectedChannels, selectedChannels) = eye(nChannels) - 1/nChannels.*ones(nChannels);    % set weights for CAR channels
-    end
+     end
 end

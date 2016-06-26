@@ -54,4 +54,7 @@ switch p.Results.filterName
         filterMatrix =  eye(nInputChannels);
 end
 
-filterMatrix = filterMatrix(selectedChannelsIndices,selectedChannelsIndices);
+%removes any empty columns -> when we multiply by raw data, we already
+%discard not needed columns and values (we don't need to substract and
+%reindex)
+filterMatrix = filterMatrix(:,any(filterMatrix))

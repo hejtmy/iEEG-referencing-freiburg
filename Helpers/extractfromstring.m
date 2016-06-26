@@ -1,4 +1,4 @@
-function out_str = extractFromString(inp_str, type)
+function out_str = extractfromstring(inp_str, type)
 % extracts string or number from input string
 
 % (c) Jiri, Apr16

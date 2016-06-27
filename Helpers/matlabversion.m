@@ -3,6 +3,6 @@ function [ strct ] = matlabversion()
 %   Detailed explanation goes here
     split = strsplit(version,' ');
     strct = struct();
-    [match, nomatch] = regexp('R2010b','\d+', 'match', 'split');
+    [match, nomatch] = regexp(split{2},'\d+', 'match', 'split');
     strct.year = str2double(match);
 end

@@ -35,7 +35,7 @@ checkChannels = @(x) isnumeric(x);
 
 version = matlabversion;
 addRequired(p,'selectedChannelsIndices',checkChannels);
-if(version.year > 2015)
+if(version.year > 2014)
     addParameter(p,'filterName', 'noFilter', checkValidFilter);
     addParameter(p, 'channelGrouping','', checkValidGrouping);
 else

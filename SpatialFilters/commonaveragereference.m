@@ -1,4 +1,4 @@
-function [ filterMatrix ] = commonaveragereference( Header, nInputChannels, selectedChannelsIndices, channelGrouping )
+function [ filterMatrix, channelGroups ] = commonaveragereference( Header, nInputChannels, selectedChannelsIndices, channelGrouping )
 %COMMONAVERAGEREFERENCE Summary of this function goes here
 %   Detailed explanation goes here
  %  define channel groups

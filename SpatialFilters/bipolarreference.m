@@ -1,4 +1,4 @@
-function [ filterMatrix ] = bipolarreference( Header, nInputChannels, selectedChannelsIndices )
+function [ filterMatrix, channelGroups ] = bipolarreference( Header, nInputChannels, selectedChannelsIndices )
 %BIPOLARREFERENCE Summary of this function goes here
 %   Detailed explanation goes here
     % define channel groups

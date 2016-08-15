@@ -1,4 +1,4 @@
-function filterMatrix = createspatialfilter(Header, nInputChannels, selectedChannelsIndices, varargin)
+function [filterMatrix, channelGroups] = createspatialfilter(Header, nInputChannels, selectedChannelsIndices, varargin)
 % creates a spatial filter for (intracranial) EEG data
 % input vars:
 %   Header: header structure
@@ -47,9 +47,9 @@ parse(p, selectedChannelsIndices, varargin{:});
 %% The real flow
 switch p.Results.filterName
     case 'bipolar'
-        filterMatrix = bipolarreference(Header, nInputChannels, selectedChannelsIndices);
+        [filterMatrix, channelGroups] = bipolarreference(Header, nInputChannels, selectedChannelsIndices);
     case 'commonAverage'
-        filterMatrix = commonaveragereference(Header, nInputChannels, selectedChannelsIndices, p.Results.channelGrouping);
+        [filterMatrix, channelGroups] = commonaveragereference(Header, nInputChannels, selectedChannelsIndices, p.Results.channelGrouping);
     case 'noFilter'
         filterMatrix =  eye(nInputChannels);
 end

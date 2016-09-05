@@ -33,9 +33,8 @@ checkValidGrouping = @(x) any(validatestring(x, validGrouping));
 
 checkChannels = @(x) isnumeric(x);
 
-version = matlabversion;
 addRequired(p,'selectedChannelsIndices',checkChannels);
-if(version.year > 2014)
+if(matlabversion> 2014)
     addParameter(p,'filterName', 'noFilter', checkValidFilter);
     addParameter(p, 'channelGrouping','', checkValidGrouping);
 else

@@ -7,7 +7,7 @@ function [refData, channelGroups] = referenceeeg(data, montage, selectedChannels
     nChannels = size(montage.channels, 2);
     % TODO - better
     if ~isempty(varargin)
-        [filterMatrix, channelGroups] = createspatialfilter(montage, nChannels, selectedChannelsIndices, 'filterName', referenceType, varargin);
+        [filterMatrix, channelGroups] = createspatialfilter(montage, nChannels, selectedChannelsIndices, 'filterName', referenceType, varargin{:});
     else 
          [filterMatrix, channelGroups] = createspatialfilter(montage, nChannels, selectedChannelsIndices, 'filterName', referenceType);
     end

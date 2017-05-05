@@ -3,7 +3,7 @@ function [ channelGroups ] = perelectrodegrouping( Header, selectedChannelsIndic
 %   In case all channels from one electrode are discarded, electrode is returned as empty - ISSUE, fix it
     electrodesFullNames = extractfield(Header.channels, 'name');
     electrodesNames = cellfun(@(x) extractfromstring(x, 'string'), electrodesFullNames, 'UniformOutput', false);
-    electrodesNames = selectcells(electrodesNames,  @(x) ~isnan(x));
+    electrodesNames = selectcells(electrodesNames,  @(x) ~any(isnan(x)));
    	uniqueElectrodesNames = unique(electrodesNames);
     channelGroups = cell(1,size(uniqueElectrodesNames,2));
     

@@ -16,6 +16,7 @@ function [ channelGroups ] = perheadboxgrouping( Header, selectedChannelsIndices
     channelGroups = cell(1, size(headboxUniqueNumbers,2));
     for headboxNumber = headboxUniqueNumbers
         %select all indices of all headbox numbers
+        if isnan(headboxNumber), continue; end
         indices = (headboxSelectedNumbers == headboxNumber);
         channelGroups{headboxNumber} = selectedChannelsIndices(indices);
     end

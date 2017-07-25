@@ -2,15 +2,21 @@ function [refData, channelGroups] = referenceeeg(data, montage, selectedChannels
 %REFERENCEEEG Summary of this function goes here
 %   Detailed explanation goes here
 %   Selected channels:  cell with names of channels we want to include {'SEEG', 'ECoG-Grid', 'ECoG-Strip'}
-
-    selectedChannelsIndices = selectchannelsindices(montage, selectedChannels);
-    nChannels = size(montage.channels, 2);
-    % TODO - better
-    if ~isempty(varargin)
-        [filterMatrix, channelGroups] = createspatialfilter(montage, nChannels, selectedChannelsIndices, 'filterName', referenceType, varargin{:});
-    else 
-         [filterMatrix, channelGroups] = createspatialfilter(montage, nChannels, selectedChannelsIndices, 'filterName', referenceType);
-    end
-    refData = data * filterMatrix;
+checkValidChannels = @(x) isnumeric(x);
+p = inputParser;
+p.KeepUnmatched = true;
+if(matlabversion> 2014)
+  addParameter(p, 'badChannels',[], checkValidChannels);
+else
+  addParamValue(p, 'badChannels',[], checkValidChannels);
 end
+parse(p, varargin{:});
 
+selectedChannelsIndices = selectchannelsindices(montage, selectedChannels);
+selectedChannelsIndices = setdiff(selectedChannelsIndices, p.Results.badChannels);
+
+nChannels = size(montage.channels, 2);
+[filterMatrix, channelGroups] = createspatialfilter(montage, nChannels, ...
+  selectedChannelsIndices, 'filterName', referenceType, varargin{:});
+
+refData = data * filterMatrix;

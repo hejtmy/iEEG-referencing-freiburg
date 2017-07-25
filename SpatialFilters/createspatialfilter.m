@@ -31,15 +31,17 @@ checkValidFilter = @(x) any(validatestring(x, validFilter));
 validGrouping = {'perHeadbox', 'perElectrode'};
 checkValidGrouping = @(x) any(validatestring(x, validGrouping));
 
-checkChannels = @(x) isnumeric(x);
+checkValidChannels = @(x) isnumeric(x);
 
-addRequired(p,'selectedChannelsIndices',checkChannels);
+addRequired(p,'selectedChannelsIndices', checkValidChannels);
 if(matlabversion> 2014)
     addParameter(p,'filterName', 'noFilter', checkValidFilter);
     addParameter(p, 'channelGrouping','', checkValidGrouping);
+    addParameter(p, 'badChannels',[], checkValidChannels);
 else
     addParamValue(p,'filterName', 'noFilter', checkValidFilter);
     addParamValue(p, 'channelGrouping','', checkValidGrouping);
+    addParamValue(p, 'badChannels',[], checkValidChannels);
 end
 parse(p, selectedChannelsIndices, varargin{:});
 
@@ -56,4 +58,4 @@ end
 %removes any empty columns -> when we multiply by raw data, we already
 %discard not needed columns and values (we don't need to substract and
 %reindex)
-filterMatrix = filterMatrix(:,any(filterMatrix));
+filterMatrix = filterMatrix(:, any(filterMatrix));
